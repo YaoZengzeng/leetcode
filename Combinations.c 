@@ -1,0 +1,56 @@
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *columnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+ 
+void combine2(int beg,int n,int k,int* s,int sLen,int*columnSizes,int* returnSize,int** ans) {
+    int i,j;
+    if(k==1){
+        for(i=beg;i<=n;i++){
+            ans[*returnSize]=(int*)malloc((sLen+k)*sizeof(int));
+            for(j=0;j<sLen;j++){
+                ans[*returnSize][j]=s[j];
+            }
+            ans[(*returnSize)++][sLen]=i;
+        }
+        return;
+    }
+    
+    if(k==(n-beg+1)){
+        ans[*returnSize]=(int*)malloc((sLen+k)*sizeof(int));
+        for(i=0;i<sLen;i++){
+            ans[*returnSize][i]=s[i];
+        }
+        j=sLen;
+        for(i=beg;i<=n;i++){
+            ans[*returnSize][j++]=i;
+        }
+        (*returnSize)++;
+        return;
+    }
+    
+    s[sLen]=beg;
+    combine2(beg+1,n,k-1,s,sLen+1,columnSizes,returnSize,ans);
+    combine2(beg+1,n,k,s,sLen,columnSizes,returnSize,ans);
+    
+    return;
+}
+
+int** combine(int n, int k, int** columnSizes, int* returnSize) {
+    int s[100],**ans,i;
+    
+    *returnSize=0;
+    if(k>n){
+        return NULL;
+    }
+    
+    ans=(int**)malloc(10000*sizeof(int*));
+    (*columnSizes)=(int*)malloc(10000*sizeof(int));
+    combine2(1,n,k,s,0,*columnSizes,returnSize,ans);
+    
+    for(i=0;i<*returnSize;i++){
+        (*columnSizes)[i]=k;
+    }
+    return ans;
+}
